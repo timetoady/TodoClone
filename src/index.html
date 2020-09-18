@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./main.css">
+    <title>Adam's Todos</title>
+</head>
+
+<body>
+   <button id='reset' class="pulse">RESET STORAGE</button>
+
+    <main>
+        <h1>Todos!</h1>
+    <div" id="topDiv">
+        <div>
+            <button id="showHide">SHOW/HIDE</button>
+        </div>
+        <div>
+            <legend>Category</legend>
+            <select id="category">
+                {<option value="Grocery">Grocery</option>
+                <option value="House">House</option>
+                <option value="School">School</option>
+                <option id="newCat" value="new">Add new...</option>
+            </select>
+        </div>
+
+        <div>
+            <form action="">
+            <input type="text" placeholder="Enter new todo..." id="newToDo">
+            <button id="addButton">ADD</button>
+        </form>
+        </div>
+    </div>
+
+        <div 
+        id="output" class="theOutput">
+        </div>
+    </main>
+
+
+
+
+        <script src="./main.js"></script>
+</body>
+
+</html>
