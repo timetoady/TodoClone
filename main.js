@@ -33,9 +33,10 @@ let addObjToLocal = (obj) => {
 //Set initial tools to storage
 let catReset = document.querySelector("#reset");
 catReset.addEventListener("click", () => {
+  localStorage.clear();
   initalTodos.forEach((obj) => {
     addObjToLocal(obj);
-    location.reload()
+    location.reload();
   });
 });
 
@@ -51,9 +52,34 @@ let getAllStorageInfo = () => {
     // console.log(key)
     infoArray.push(getInfoById(key));
   }
-
-  return infoArray;
+  noNulls = infoArray.filter((object) => object !== null);
+  return noNulls;
 };
+
+let getIDByTodo = (getTodo) => {
+  storageInfo = getAllStorageInfo();
+  noNulls = storageInfo.filter((object) => object !== null);
+  noNulls.forEach((obj) => {
+    if (obj.todo === getTodo) {
+      console.log(obj.id);
+      return obj.id;
+    }
+  });
+};
+
+let getCatByID = (ID) => {
+  storageInfo = getAllStorageInfo();
+  noNulls = storageInfo.filter((object) => object !== null);
+  noNulls.forEach((obj) => {
+    if (obj.id === ID) {
+      console.log(obj.category);
+      return obj.category;
+    }
+  });
+};
+
+
+console.log("All storage info:");
 
 //Functions to remove and update localStorage
 let removeInfoById = (id) => {
@@ -83,25 +109,17 @@ const addButton = document.querySelector("#addButton");
 const newToDo = document.querySelector("#newToDo");
 const theOutput = document.querySelector("#output");
 
-//Hide/show listener. Not working yet!
+//Listener for hide complete
 showHide.addEventListener("click", () => {
-  alert('Oops, sorry, not working yet. :D')
-  console.log("!!!!!!!Show/Hide Clicked!");
-  let isStrike = document.querySelectorAll(".striked");
-  isStrike.forEach((node) => {
-    console.log(node.parentElement.id);
-    let elementToHide = document.querySelector(`#${node.parentElement.id}`);
-    if (node.classList.contains("striked")) {
-      console.log(node);
-      console.log(`This node is striked! Hiding parent:`);
-      console.log(elementToHide);
-      elementToHide.setAttribute("class", "hidden");
-      refreshDOM();
-    } else {
-      elementToHide.setAttribute("class", "shown");
-      refreshDOM();
-    }
-  });
+  if (showHide.value === "hide") {
+    showHide.value = "show";
+    showHide.textContent = "HIDE COMPLETE";
+    refreshDOM()
+  } else {
+    showHide.value = "hide";
+    showHide.textContent = "SHOW ALL";
+    refreshDOM()
+  }
 });
 
 let categoryDrop = document.querySelector("#category");
@@ -118,28 +136,41 @@ newToDo.addEventListener("keyup", (event) =>
 );
 addButton.addEventListener("click", () => constructObject(newToDo.value));
 
-console.log(Object.values(localStorage));
 
 let constructObject = (newVal) => {
   console.log(newVal);
   let catVal = getCategoryValue();
   console.log(catVal);
   newTodoObj = {};
-  newTodoObj["id"] = Math.floor(Math.random() * 9999) + 4;
+  newTodoObj["id"] = Math.floor(Math.random() * 999999) + 4;
   newTodoObj["todo"] = newVal;
   newTodoObj["complete"] = false;
   newTodoObj["category"] = catVal;
   console.log(`Construct object says this is the new todo ${newTodoObj.todo}`);
-  if (newVal === "" || newVal === " ") {
-    alert("Todo is empty. Please add todo item.");
-  } else if (Object.values(localStorage).includes(`'${newVal}'`)) {
-    alert("Todo is already on the list.");
-  } else {
-    addObjToLocal(newTodoObj);
-  }
+  // if (newVal === "" || newVal === " ") {
+  //   alert("Todo is empty. Please add todo item.");
+  // } else {
+  addObjToLocal(newTodoObj);
 };
 
-// let strikeIt = (boxID) => {}; This will change the class of any with complete category true to strikeout
+
+let autoConstruct = (inheretCat, newVal) => {
+  console.log(inheretCat);
+  newTodoObj = {};
+  newTodoObj["id"] = Math.floor(Math.random() * 999999) + 4;
+  newTodoObj["todo"] = newVal;
+  newTodoObj["complete"] = false;
+  newTodoObj["category"] = inheretCat;
+  addObjToLocal(newTodoObj);
+};
+
+categoryDrop.addEventListener("change", () => {
+  if(categoryDrop.value === 'new') {
+    newCat = prompt('Add a new category')
+    autoConstruct(newCat, '')
+    refreshDOM()
+  };
+});
 
 let filterToDOM = () => {
   allLocal = getAllStorageInfo();
@@ -184,6 +215,7 @@ function getNested(fn, defaultVal) {
 //The main function that shows filtered info on the DOM
 let DOMbuilder = () => {
   console.log("DOMbuilder start!");
+
   filteredData = filterToDOM();
   containerExists = document.querySelector("#listContainer");
   if (containerExists === null) {
@@ -203,24 +235,59 @@ let DOMbuilder = () => {
     containedTodos = getNested(() => filteredData[category]["todo"]);
     for (todo in containedTodos) {
       todoStates = getNested(() => filteredData[category]["todo"][todo]);
+      console.log(`Here are the todo states`)
       todoDiv = document.createElement("div");
-      todoLI = document.createElement("p");
-      todoLI.textContent = todo;
       todoDiv.setAttribute("id", `div${todoStates.id}`);
       categoryUL.appendChild(todoDiv);
-      let label = document.createElement("label");
-      label.textContent = todo;
+      let todoInput = document.createElement("input");
+      resizable(todoInput, 10);
+      todoInput.value = todo;
+      todoInput.placeholder = "List item";
+      todoInput.name = todoStates.category
       let checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.id = `${todoStates.id}`;
-      label.setAttribute("id", `li${checkbox.id}`);
+      todoInput.addEventListener("input", () => {
+        changeInfoByID(checkbox.id, "todo", todoInput.value);
+      });
+
+      // //Experimental auto add new entry box
+      // todoInput.addEventListener("input", () => {
+      //   let newDiv = document.createElement("div");
+      //   let newInput = document.createElement("input");
+      //   let newCheck = document.createElement('input')
+      //   newCheck.type = 'checkbox'
+      //   newCheck.id = Math.floor(Math.random() * 999999) + 4;
+      //   let newX = document.createElement("button");
+      //   newX.textContent = "✕";
+      //   //flabby
+      //   newX.addEventListener("click", () => {
+      //     removeInfoById(newCheck.id);
+      //     refreshDOM();
+      //   });
+      //   newInput.setAttribute("id", `li${newCheck.id}`);
+          
+      //   newInput.setAttribute("class", `nostrike`);
+      //   newInput.addEventListener("blur", () => {
+      //     autoConstruct(category, newInput.value);
+      //   });
+      //   todoDiv.appendChild(newDiv);
+      //   newDiv.appendChild(newCheck);
+      //   newDiv.appendChild(newInput);
+      //   newDiv.appendChild(newX);
+   
+      // }, {once:true})
+
+
+      todoInput.setAttribute("id", `li${checkbox.id}`);
       categoryUL.setAttribute("id", `ul${checkbox.id}`);
       checkbox.value == `${todoStates.id}`;
       if (todoStates.complete === true) {
-        label.setAttribute("class", "striked");
+        todoInput.setAttribute("class", "striked");
         checkbox.checked = true;
+        showHide.value === 'hide' ? todoDiv.setAttribute("class", "hidden") : todoDiv.setAttribute("class", "show")
       } else {
-        label.setAttribute("class", "nostrike");
+        todoInput.setAttribute("class", "nostrike");
         checkbox.checked = false;
       }
       let removeIt = document.createElement("button");
@@ -230,7 +297,7 @@ let DOMbuilder = () => {
         refreshDOM();
       });
       todoDiv.appendChild(checkbox);
-      todoDiv.appendChild(label);
+      todoDiv.appendChild(todoInput);
       todoDiv.appendChild(removeIt);
       checkbox.addEventListener("change", () => {
         if (checkbox.checked) {
@@ -249,6 +316,16 @@ let DOMbuilder = () => {
 };
 
 DOMbuilder();
+
+function resizable(el, factor) {
+  var int = Number(factor) || 7.7;
+  function resize() {
+    el.style.width = (el.value.length + 1) * int + "px";
+  }
+  var e = "keyup,keypress,focus,blur,change".split(",");
+  for (var i in e) el.addEventListener(e[i], resize, false);
+  resize();
+}
 
 //drop down box that sets category from category field and has "Add New" option, which adds a new cat
 

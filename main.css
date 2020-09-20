@@ -1,5 +1,5 @@
 body{
-    padding: .2rem;
+    padding: 2%;
     background-color: #202124;
     color: #ccc;
 }
@@ -27,7 +27,7 @@ body{
   }
 
 main {
-    max-width: 50%;
+    max-width: 75%;
     margin: 0 auto;
 }
 
@@ -94,13 +94,13 @@ ul {
 }
 
 ul div {
-    width: 90%;
-    
+    width: 96%;
+    padding: 0;
 }
 
 ul label {
     font-size: 1.1rem;
-    margin-left: .3rem;
+    margin-left: .4rem;
 }
 
 ul button {
@@ -129,8 +129,24 @@ ul button:hover{
 
 .striked {
     text-decoration: line-through !important;
-  
+}
 
+.nostrike, .striked {
+    color: #ccc;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #333;
+    border-top: 1px solid #333;
+    font-size: 1rem;
+    padding-left: .6rem;
+    min-width:50%!important;
+    max-width:99.99%!important;
+    transition: width 0.25s;
+    padding: .4rem;
+}
+
+.nostrike:focus, .striked:focus {
+    outline: none;
 }
 
 .hidden {
