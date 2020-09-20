@@ -33,6 +33,7 @@ main {
 
 h1 {
     color: #ccc;
+    font-size: 3rem;
 }
 
 #topDiv {
@@ -50,7 +51,13 @@ h1 {
 #category{
     padding: .6rem;
     min-width: 70%;
+    display: flex;
+    justify-content: space-between;
+  
+}
 
+#catDiv button{
+    color: red;
 }
 
 #showHide {
@@ -96,11 +103,13 @@ ul {
 ul div {
     width: 96%;
     padding: 0;
+
 }
 
-ul label {
+ul input {
     font-size: 1.1rem;
     margin-left: .4rem;
+    
 }
 
 ul button {
@@ -135,14 +144,14 @@ ul button:hover{
     color: #ccc;
     background: none;
     border: none;
-    border-bottom: 1px solid #333;
-    border-top: 1px solid #333;
     font-size: 1rem;
     padding-left: .6rem;
     min-width:50%!important;
     max-width:99.99%!important;
     transition: width 0.25s;
     padding: .4rem;
+    border-bottom: 1px solid #333;
+    border-top: 1px solid #333;
 }
 
 .nostrike:focus, .striked:focus {
@@ -157,3 +166,20 @@ ul button:hover{
     display: block !important;
 }
 
+@media (max-width:500px) {
+
+main {
+    max-width: 96%;
+    margin: 0 auto;
+}
+ul {
+    padding-left: 0;
+}
+.striked, .nostrike{
+width: 85% !important;
+}
+
+#newToDo, #addButton {
+    font-size: 16px;
+}
+}

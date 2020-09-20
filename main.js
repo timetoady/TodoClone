@@ -12,12 +12,67 @@ let initalTodos = [
     category: "School",
   },
 ];
+//Things left: remove category method, new auto todo pop in same category, cleanup  code
 
+
+
+
+let catDiv = document.querySelector("#catDiv")
+
+
+let catGetter = () => {
+  containerExists = document.querySelector("#category");
+  if (containerExists === null) {
+    categoryDrop = document.createElement("select");
+    categoryDrop.setAttribute("id", "category");
+    catDiv.appendChild(categoryDrop)
+  } else {
+    containerExists.remove();
+    console.log("Removed old container");
+    categoryDrop = document.createElement("select");
+    categoryDrop.setAttribute("id", "category");
+  }
+  local = getAllStorageInfo()
+catDiv.appendChild(categoryDrop)
+  let categories = local.map(object => object.category)
+  let noDuplicates = [...new Set(categories)]
+  noDuplicates.forEach(category => {
+    let catOption = document.createElement('option')
+    catOption.value = category
+    catOption.textContent = category
+    currentID = Math.floor(Math.random() * 999999) + 4
+    catOption.id = `catOpt${currentID}`;
+    categoryDrop.appendChild(catOption)
+    // let removeIt = document.createElement("button");
+    //   removeIt.textContent = "✕";
+    //   removeIt.addEventListener("click", () => {
+    //     removeInfoById(currentID);
+    //     refreshDOM();
+    //   });
+    //   catDiv.appendChild(removeIt)
+       //Function to update categories dynamically
+categoryDrop.addEventListener("change", () => {
+  if(categoryDrop.value === 'new') {
+    newCat = prompt('Add a new category')
+    autoConstruct(newCat, '', currentID)
+    catGetter();
+    refreshDOM()
+  };
+});
+  })
+  let newCatAdd = document.createElement('option')
+  newCatAdd.setAttribute('id', "newCat")
+  newCatAdd.value = "new"
+  newCatAdd.textContent = "Add new category..."
+  categoryDrop.appendChild(newCatAdd)
+
+ 
+}
 //Remaining things to solve
 
-//Show hide button actually reflecting in DOM
-//Dynamically add categories that stay added to drop down box
-//Stop error of repeat ads overlapping, either by stopping second add or adding duplicate entry below category
+
+
+//Stop error of repeat adds overlapping, either by stopping second add or adding duplicate entry below category
 
 let refreshDOM = () => {
   let oldDiv = document.querySelector("#listContainer");
@@ -29,6 +84,16 @@ let addObjToLocal = (obj) => {
   localStorage.setItem(obj.id, JSON.stringify(obj));
   //refreshDOM();
 };
+
+let main = document.querySelector('main')
+
+main.addEventListener("load", () => {
+  localStorage.clear();
+  initalTodos.forEach((obj) => {
+    addObjToLocal(obj);
+    location.reload();
+  }, {once:true})
+});
 
 //Set initial tools to storage
 let catReset = document.querySelector("#reset");
@@ -56,6 +121,8 @@ let getAllStorageInfo = () => {
   return noNulls;
 };
 
+catGetter()
+
 let getIDByTodo = (getTodo) => {
   storageInfo = getAllStorageInfo();
   noNulls = storageInfo.filter((object) => object !== null);
@@ -78,8 +145,18 @@ let getCatByID = (ID) => {
   });
 };
 
+//Function called up to consturct object with category and todo value, giving a random ID
+let autoConstruct = (inheretCat, newVal, id = (Math.floor(Math.random() * 999999) + 4)) => {
+  console.log(inheretCat);
+  newTodoObj = {};
+  newTodoObj["id"] = id
+  newTodoObj["todo"] = newVal;
+  newTodoObj["complete"] = false;
+  newTodoObj["category"] = inheretCat;
+  addObjToLocal(newTodoObj);
+  return newTodoObj.id;
+};
 
-console.log("All storage info:");
 
 //Functions to remove and update localStorage
 let removeInfoById = (id) => {
@@ -122,7 +199,7 @@ showHide.addEventListener("click", () => {
   }
 });
 
-let categoryDrop = document.querySelector("#category");
+
 
 let getCategoryValue = () => {
   categoryDrop.addEventListener("change", () => {
@@ -153,24 +230,6 @@ let constructObject = (newVal) => {
   addObjToLocal(newTodoObj);
 };
 
-
-let autoConstruct = (inheretCat, newVal) => {
-  console.log(inheretCat);
-  newTodoObj = {};
-  newTodoObj["id"] = Math.floor(Math.random() * 999999) + 4;
-  newTodoObj["todo"] = newVal;
-  newTodoObj["complete"] = false;
-  newTodoObj["category"] = inheretCat;
-  addObjToLocal(newTodoObj);
-};
-
-categoryDrop.addEventListener("change", () => {
-  if(categoryDrop.value === 'new') {
-    newCat = prompt('Add a new category')
-    autoConstruct(newCat, '')
-    refreshDOM()
-  };
-});
 
 let filterToDOM = () => {
   allLocal = getAllStorageInfo();
@@ -251,37 +310,37 @@ let DOMbuilder = () => {
         changeInfoByID(checkbox.id, "todo", todoInput.value);
       });
 
-      // //Experimental auto add new entry box
-      // todoInput.addEventListener("input", () => {
-      //   let newDiv = document.createElement("div");
-      //   let newInput = document.createElement("input");
-      //   let newCheck = document.createElement('input')
-      //   newCheck.type = 'checkbox'
-      //   newCheck.id = Math.floor(Math.random() * 999999) + 4;
-      //   let newX = document.createElement("button");
-      //   newX.textContent = "✕";
-      //   //flabby
-      //   newX.addEventListener("click", () => {
-      //     removeInfoById(newCheck.id);
-      //     refreshDOM();
-      //   });
-      //   newInput.setAttribute("id", `li${newCheck.id}`);
-          
-      //   newInput.setAttribute("class", `nostrike`);
-      //   newInput.addEventListener("blur", () => {
-      //     autoConstruct(category, newInput.value);
-      //   });
-      //   todoDiv.appendChild(newDiv);
-      //   newDiv.appendChild(newCheck);
-      //   newDiv.appendChild(newInput);
-      //   newDiv.appendChild(newX);
+      //Experimental auto add new entry box
+      todoInput.addEventListener("input", () => {
+        let newDiv = document.createElement("div");
+        let newInput = document.createElement("input");
+        let newCheck = document.createElement('input')
+        newCheck.type = 'checkbox'
+        newCheck.id = Math.floor(Math.random() * 999999) + 4;
+        let newX = document.createElement("button");
+        newX.textContent = "✕";
+        //flabby
+        newX.addEventListener("click", () => {
+          removeInfoById(newCheck.id);
+          refreshDOM();
+        });
+        newInput.setAttribute("id", `li${newCheck.id}`);
+        newInput.setAttribute("class", `nostrike`);
+        newInput.addEventListener("blur", () => {
+          autoConstruct(getCatByID(checkbox.id), newInput.value);
+        });
+        todoDiv.appendChild(newDiv);
+        newDiv.appendChild(newCheck);
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(newX);
    
-      // }, {once:true})
+      }, {once:true})
 
 
       todoInput.setAttribute("id", `li${checkbox.id}`);
       categoryUL.setAttribute("id", `ul${checkbox.id}`);
       checkbox.value == `${todoStates.id}`;
+      //Hides completed items
       if (todoStates.complete === true) {
         todoInput.setAttribute("class", "striked");
         checkbox.checked = true;
@@ -299,6 +358,7 @@ let DOMbuilder = () => {
       todoDiv.appendChild(checkbox);
       todoDiv.appendChild(todoInput);
       todoDiv.appendChild(removeIt);
+      //Strikes completed items by checkbox ID
       checkbox.addEventListener("change", () => {
         if (checkbox.checked) {
           console.log(`Checkbox ${checkbox.id} is checked`);
