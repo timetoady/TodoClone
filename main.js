@@ -327,9 +327,9 @@ let DOMbuilder = () => {
         newInput.setAttribute("id", `li${newCheck.id}`);
         newInput.setAttribute("class", `nostrike`);
         newInput.addEventListener("blur", () => {
-          autoConstruct(getCatByID(checkbox.id), newInput.value);
+          autoConstruct(todoInput.name, newInput.value);
         });
-        todoDiv.appendChild(newDiv);
+        categoryUL.appendChild(newDiv);
         newDiv.appendChild(newCheck);
         newDiv.appendChild(newInput);
         newDiv.appendChild(newX);
