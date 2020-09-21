@@ -12,7 +12,7 @@ let initalTodos = [
     category: "School",
   },
 ];
-//Things left: remove category method, new auto todo pop in same category, cleanup code
+
 
 let catDiv = document.querySelector("#catDiv");
 let catGetter = () => {
@@ -41,12 +41,10 @@ let catGetter = () => {
     categoryDrop.addEventListener("change", () => {
       if (categoryDrop.value === "new") {
         newCat = prompt("Add a new category");
-        autoConstruct(newCat, "", currentID);
+        let newCon = autoConstruct(newCat, "", currentID);
         catGetter();
         refreshDOM();
-        // setTimeout(alert('I am alerting you of timeout!'), 3000)
-        
-        
+        document.querySelector(`#input${newCon}`).focus()
       }
     });
   });
@@ -61,7 +59,6 @@ let catGetter = () => {
 
 //Stop error of repeat adds overlapping, either by stopping second add or adding duplicate entry below category
 //Load standard data just the first time
-//Make categories removable
 //Do get cateogry info in popup instead of a prompt
 //Optional: fix new item appear so it has the right category, and appears directly below where you are typing
 
@@ -143,7 +140,7 @@ let getCatByID = (ID) => {
 let autoConstruct = (
   inheretCat,
   newVal,
-  id = Math.floor(Math.random() * 999999) + 4
+  id = (Math.floor(Math.random() * 999999) + 4)
 ) => {
   console.log(inheretCat);
   newTodoObj = {};
@@ -319,13 +316,13 @@ let DOMbuilder = () => {
             removeInfoById(newCheck.id);
             refreshDOM();
           });
-          newInput.setAttribute("id", `li${newCheck.id}`);
+          newInput.setAttribute("id", newCheck.id);
           newInput.setAttribute("class", `nostrike`);
           newInput.addEventListener("blur", () => {
             autoConstruct(
               todoInput.name,
               newInput.value,
-              `input${checkbox.id}`
+              null
             );
           });
           categoryUL.appendChild(newDiv);
