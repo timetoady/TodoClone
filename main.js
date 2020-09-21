@@ -38,21 +38,27 @@ let catGetter = () => {
     currentID = Math.floor(Math.random() * 999999) + 4;
     catOption.id = `catOpt${currentID}`;
     categoryDrop.appendChild(catOption);
-    categoryDrop.addEventListener("change", () => {
-      if (categoryDrop.value === "new") {
-        newCat = prompt("Add a new category");
-        let newCon = autoConstruct(newCat, "", currentID);
-        catGetter();
-        refreshDOM();
-        document.querySelector(`#input${newCon}`).focus()
-      }
-    });
+    
   });
+  let addBlankCat = document.createElement("option");
+  addBlankCat.setAttribute("id", "blankCat");
+  addBlankCat.value = "";
+  addBlankCat.textContent = "";
   let newCatAdd = document.createElement("option");
   newCatAdd.setAttribute("id", "newCat");
   newCatAdd.value = "new";
   newCatAdd.textContent = "Add new category...";
+  categoryDrop.appendChild(addBlankCat)
   categoryDrop.appendChild(newCatAdd);
+  categoryDrop.addEventListener("change", () => {
+    if (categoryDrop.value === "new") {
+      newCat = prompt("Add a new category");
+      let newCon = autoConstruct(newCat, "",);
+      catGetter();
+      refreshDOM();
+      document.querySelector(`#input${newCon}`).focus()
+    }
+  });
   
 };
 //Remaining things to solve
@@ -201,9 +207,9 @@ let getCategoryValue = () => {
 };
 
 newToDo.addEventListener("keyup", (event) =>
-  event.keyCode === 13 ? constructObject(newToDo.value) : null
+  event.keyCode === 13 ? autoConstruct(getCategoryValue(), newToDo.value) : null
 );
-addButton.addEventListener("click", () => constructObject(newToDo.value));
+addButton.addEventListener("click", () => autoConstruct(getCategoryValue(),newToDo.value));
 
 let constructObject = (newVal) => {
   console.log(newVal);
@@ -319,12 +325,8 @@ let DOMbuilder = () => {
           newInput.setAttribute("id", newCheck.id);
           newInput.setAttribute("class", `nostrike`);
           newInput.addEventListener("blur", () => {
-            autoConstruct(
-              todoInput.name,
-              newInput.value,
-              null
-            );
-          });
+          autoConstruct("", newInput.value, `input${newCheck.id}`);
+           });
           categoryUL.appendChild(newDiv);
           newDiv.appendChild(newCheck);
           newDiv.appendChild(newInput);
