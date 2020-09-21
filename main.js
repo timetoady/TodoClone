@@ -13,7 +13,7 @@ let initalTodos = [
   },
 ];
 
-
+//Main function that gets categories from localStorage and populates them in DOM with attributes.
 let catDiv = document.querySelector("#catDiv");
 let catGetter = () => {
   containerExists = document.querySelector("#category");
@@ -40,6 +40,8 @@ let catGetter = () => {
     categoryDrop.appendChild(catOption);
     
   });
+  //Here, after the categoreis populated by the localStorage, automaticaly adds a blank &
+  //new category adding option.
   let addBlankCat = document.createElement("option");
   addBlankCat.setAttribute("id", "blankCat");
   addBlankCat.value = "";
@@ -63,20 +65,23 @@ let catGetter = () => {
 };
 //Remaining things to solve
 
-//Stop error of repeat adds overlapping, either by stopping second add or adding duplicate entry below category
 //Load standard data just the first time
+//Stop error of repeat adds overlapping, either by stopping second add or adding duplicate entry below category
 //Do get cateogry info in popup instead of a prompt
 //Optional: fix new item appear so it has the right category, and appears directly below where you are typing
 
+//Small function that refreshes the DOM rendering as needed. Really wish I had a cleaner way.
 let refreshDOM = () => {
   let oldDiv = document.querySelector("#listContainer");
   oldDiv.remove();
   DOMbuilder();
 };
 
+//Commits recieved object to local storage.
 let addObjToLocal = (obj) => {
+  //Here need check for duplicates
+  //let currStorage = getAllStorageInfo()
   localStorage.setItem(obj.id, JSON.stringify(obj));
-  //refreshDOM();
 };
 
 let main = document.querySelector("main");
@@ -92,15 +97,24 @@ main.addEventListener("load", () => {
   );
 });
 
-//Set initial tools to storage
+//Set initial todos to storage manually
 let catReset = document.querySelector("#reset");
 catReset.addEventListener("click", () => {
   localStorage.clear();
+  resetCats();
+});
+
+let resetCats = () => {
   initalTodos.forEach((obj) => {
     addObjToLocal(obj);
     location.reload();
   });
-});
+}
+
+const checkStorage = () => {
+  storage = getAllStorageInfo()
+  storage.length === 0 ? resetCats() : null
+}
 
 //Functions to get info from storage for display
 let getInfoById = (id) => {
@@ -108,6 +122,7 @@ let getInfoById = (id) => {
   return theItem;
 };
 
+//Checks contents of current local storage, putes them in array of objects, filtering out nulls
 let getAllStorageInfo = () => {
   infoArray = [];
   for (key in localStorage) {
@@ -117,9 +132,10 @@ let getAllStorageInfo = () => {
   noNulls = infoArray.filter((object) => object !== null);
   return noNulls;
 };
-
+checkStorage()
 catGetter();
 
+//Gets the ID of an object in local storage by it's todo value
 let getIDByTodo = (getTodo) => {
   storageInfo = getAllStorageInfo();
   noNulls = storageInfo.filter((object) => object !== null);
@@ -131,6 +147,7 @@ let getIDByTodo = (getTodo) => {
   });
 };
 
+//Gets the category of an object in local storage by it's id
 let getCatByID = (ID) => {
   storageInfo = getAllStorageInfo();
   noNulls = storageInfo.filter((object) => object !== null);
@@ -143,12 +160,13 @@ let getCatByID = (ID) => {
 };
 
 //Function called up to consturct object with category and todo value, giving a random ID
+//by default unless ID is specified
 let autoConstruct = (
   inheretCat,
   newVal,
   id = (Math.floor(Math.random() * 999999) + 4)
 ) => {
-  console.log(inheretCat);
+  console.log(`Category to construct for: ${inheretCat}`);
   newTodoObj = {};
   newTodoObj["id"] = id;
   newTodoObj["todo"] = newVal;
@@ -156,6 +174,7 @@ let autoConstruct = (
   newTodoObj["category"] = inheretCat;
   addObjToLocal(newTodoObj);
   return newTodoObj.id;
+  
 };
 
 //Functions to remove and update localStorage
@@ -180,8 +199,9 @@ let changeInfoByID = (id, infoKey, value) => {
   console.log(getInfoById(id));
 };
 
-//Get info from all needed parts
+//Get info from needed parts by selecting hardcoded parts of DOM
 const showHide = document.querySelector("#showHide");
+showHide.textContent = 'HIDE COMPLETE'
 const addButton = document.querySelector("#addButton");
 const newToDo = document.querySelector("#newToDo");
 const theOutput = document.querySelector("#output");
@@ -205,11 +225,6 @@ let getCategoryValue = () => {
   });
   return categoryDrop.value;
 };
-
-newToDo.addEventListener("keyup", (event) =>
-  event.keyCode === 13 ? autoConstruct(getCategoryValue(), newToDo.value) : null
-);
-addButton.addEventListener("click", () => autoConstruct(getCategoryValue(),newToDo.value));
 
 // let constructObject = (newVal) => {
 //   console.log(newVal);
@@ -266,6 +281,10 @@ function getNested(fn, defaultVal) {
     return defaultVal;
   }
 }
+newToDo.addEventListener("keyup", (event) =>
+event.keyCode === 13 ? autoConstruct(getCategoryValue(), newToDo.value) : null
+);
+addButton.addEventListener("click", () => autoConstruct(getCategoryValue(),newToDo.value));
 
 //The main function that shows filtered info on the DOM
 let DOMbuilder = () => {

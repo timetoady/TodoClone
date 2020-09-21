@@ -50,7 +50,7 @@ h1 {
 
 #category{
     padding: .6rem;
-    min-width: 70%;
+    width: minmax(35%, 60%);
     display: flex;
     justify-content: space-between;
   
