@@ -211,21 +211,21 @@ newToDo.addEventListener("keyup", (event) =>
 );
 addButton.addEventListener("click", () => autoConstruct(getCategoryValue(),newToDo.value));
 
-let constructObject = (newVal) => {
-  console.log(newVal);
-  let catVal = getCategoryValue();
-  console.log(catVal);
-  newTodoObj = {};
-  newTodoObj["id"] = Math.floor(Math.random() * 999999) + 4;
-  newTodoObj["todo"] = newVal;
-  newTodoObj["complete"] = false;
-  newTodoObj["category"] = catVal;
-  console.log(`Construct object says this is the new todo ${newTodoObj.todo}`);
-  // if (newVal === "" || newVal === " ") {
-  //   alert("Todo is empty. Please add todo item.");
-  // } else {
-  addObjToLocal(newTodoObj);
-};
+// let constructObject = (newVal) => {
+//   console.log(newVal);
+//   let catVal = getCategoryValue();
+//   console.log(catVal);
+//   newTodoObj = {};
+//   newTodoObj["id"] = Math.floor(Math.random() * 999999) + 4;
+//   newTodoObj["todo"] = newVal;
+//   newTodoObj["complete"] = false;
+//   newTodoObj["category"] = catVal;
+//   console.log(`Construct object says this is the new todo ${newTodoObj.todo}`);
+//   // if (newVal === "" || newVal === " ") {
+//   //   alert("Todo is empty. Please add todo item.");
+//   // } else {
+//   addObjToLocal(newTodoObj);
+// };
 
 let filterToDOM = () => {
   allLocal = getAllStorageInfo();
@@ -307,33 +307,33 @@ let DOMbuilder = () => {
       });
 
       //Experimental auto add new entry box
-      todoInput.addEventListener(
-        "input",
-        () => {
-          let newDiv = document.createElement("div");
-          let newInput = document.createElement("input");
-          let newCheck = document.createElement("input");
-          newCheck.type = "checkbox";
-          newCheck.id = Math.floor(Math.random() * 999999) + 4;
-          let newX = document.createElement("button");
-          newX.textContent = "✕";
-          //flabby
-          newX.addEventListener("click", () => {
-            removeInfoById(newCheck.id);
-            refreshDOM();
-          });
-          newInput.setAttribute("id", newCheck.id);
-          newInput.setAttribute("class", `nostrike`);
-          newInput.addEventListener("blur", () => {
-          autoConstruct("", newInput.value, `input${newCheck.id}`);
-           });
-          categoryUL.appendChild(newDiv);
-          newDiv.appendChild(newCheck);
-          newDiv.appendChild(newInput);
-          newDiv.appendChild(newX);
-        },
-        { once: true }
-      );
+      // todoInput.addEventListener(
+      //   "input",
+      //   () => {
+      //     let newDiv = document.createElement("div");
+      //     let newInput = document.createElement("input");
+      //     let newCheck = document.createElement("input");
+      //     newCheck.type = "checkbox";
+      //     newCheck.id = Math.floor(Math.random() * 999999) + 4;
+      //     let newX = document.createElement("button");
+      //     newX.textContent = "✕";
+      //     //flabby
+      //     newX.addEventListener("click", () => {
+      //       removeInfoById(newCheck.id);
+      //       refreshDOM();
+      //     });
+      //     newInput.setAttribute("id", newCheck.id);
+      //     newInput.setAttribute("class", `nostrike`);
+      //     newInput.addEventListener("blur", () => {
+      //     autoConstruct("", newInput.value, `input${newCheck.id}`);
+      //      });
+      //     categoryUL.appendChild(newDiv);
+      //     newDiv.appendChild(newCheck);
+      //     newDiv.appendChild(newInput);
+      //     newDiv.appendChild(newX);
+      //   },
+      //   { once: true }
+      // );
 
       todoInput.setAttribute("id", `input${checkbox.id}`);
       categoryUL.setAttribute("id", `ul${checkbox.id}`);
