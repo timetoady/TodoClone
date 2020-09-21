@@ -18,8 +18,6 @@ let initalTodos = [
 
 
 let catDiv = document.querySelector("#catDiv")
-
-
 let catGetter = () => {
   containerExists = document.querySelector("#category");
   if (containerExists === null) {
@@ -70,9 +68,11 @@ categoryDrop.addEventListener("change", () => {
 }
 //Remaining things to solve
 
-
-
 //Stop error of repeat adds overlapping, either by stopping second add or adding duplicate entry below category
+//Load standard data just the first time
+//Make categories removable
+//Do get cateogry info in popup instead of a prompt
+//Optional: fix new item appear so it has the right category, and appears directly below where you are typing
 
 let refreshDOM = () => {
   let oldDiv = document.querySelector("#listContainer");
@@ -88,6 +88,7 @@ let addObjToLocal = (obj) => {
 let main = document.querySelector('main')
 
 main.addEventListener("load", () => {
+  if (localStorage.get(1) === null)
   localStorage.clear();
   initalTodos.forEach((obj) => {
     addObjToLocal(obj);
