@@ -16,7 +16,6 @@ let initalTodos = [
 //Remaining issues to solve
 
 //Bugs to fix
-//Stop error of repeat added todos overlapping, either by stopping second add or adding duplicate entry below category
 //View switches from Show all to Hide Complete when Add new is triggered. Must stay instead.
 
 //Features to update
@@ -80,8 +79,6 @@ let refreshDOM = () => {
 
 //Commits recieved object to local storage.
 let addObjToLocal = (obj) => {
-  //Here need check for duplicates
-  //let currStorage = getAllStorageInfo()
   localStorage.setItem(obj.id, JSON.stringify(obj));
 };
 
@@ -98,7 +95,7 @@ main.addEventListener("load", () => {
   );
 });
 
-//Set initial todos to storage manually
+//Set initial todos to storage manually, or add them if none on load just once
 let catReset = document.querySelector("#reset");
 catReset.addEventListener("click", () => {
   localStorage.clear();
@@ -117,6 +114,14 @@ const checkStorage = () => {
   storage.length === 0 ? resetCats() : null;
 };
 
+window.addEventListener(
+  "load",
+  () => {
+    checkStorage();
+  },
+  { once: true }
+);
+
 //Functions to get info from storage for display
 let getInfoById = (id) => {
   let theItem = JSON.parse(localStorage.getItem(id));
@@ -133,8 +138,14 @@ let getAllStorageInfo = () => {
   noNulls = infoArray.filter((object) => object !== null);
   return noNulls;
 };
-checkStorage();
-catGetter();
+
+window.addEventListener(
+  "load",
+  () => {
+    catGetter();
+  },
+  { once: true }
+);
 
 //Gets the ID of an object in local storage by it's todo value
 let getIDByTodo = (getTodo) => {
@@ -218,42 +229,13 @@ let getCategoryValue = () => {
   return categoryDrop.value;
 };
 
-const removeDuplicates = (list) => {
-  todoArray = []
-  todos = list.forEach(object => {
-    console.log(object.todo)
-    todoArray.push(object.todo)
-  })
-   console.log("Here are the todos in array") 
-  findDups = todoArray.reduce((acc, currentValue, index, array) => {
-    if(array.indexOf(currentValue)!=index && !acc.includes(currentValue)) {
-      acc.push(getIDByTodo(currentValue));
-    }
-    //console.log(acc)
-    return acc;
-  }, []);
-  //fanny
-  findDups.forEach(duplicateID =>{
-    console.log(duplicateID)
-    while (findDups.length > 1) {
-      removeInfoById(duplicate)
-      findDups.pop()
-    }
-  })
-}
-
-
-
 //Primary filter to make localStorage more parsable to put into the DOM. Passes to DOMbuilder.
 let filterToDOM = () => {
-  removeDuplicates(getAllStorageInfo().filter((object) => object !== null))
   allLocal = getAllStorageInfo();
   noNulls = allLocal.filter((object) => object !== null);
   console.log(allLocal);
   categoryByObj = {};
-  
   noNulls.forEach((object) => {
-    
     console.log(object.category);
     catDisplay = object.category;
     todoForList = object.todo;
@@ -263,8 +245,6 @@ let filterToDOM = () => {
       categoryByObj[catDisplay]["todo"][todoForList] = {};
       categoryByObj[catDisplay]["todo"][todoForList]["complete"] = isComplete;
       categoryByObj[catDisplay]["todo"][todoForList]["id"] = todoID;
-      console.log(categoryByObj);
-      containedTodos = getNested(() => noNulls[category]["todo"]);
     } else {
       categoryByObj[catDisplay] = {};
       categoryByObj[catDisplay]["todo"] = {};
@@ -301,15 +281,47 @@ const showStateSet = () => {
 
 newToDo.addEventListener("keyup", (event) => {
   if (event.keyCode === 13) {
-    autoConstruct(getCategoryValue(), newToDo.value);
-    showStateSet();
+    isDups = dupCheck(newToDo.value);
+    console.log(`isDups says ${isDups}`);
+    if (isDups === true) {
+      console.log(`isDups = ${isDups}`);
+      alert("Duplicate todo provided.");
+    } else {
+      autoConstruct(getCategoryValue(), newToDo.value);
+      
+    }
   }
 });
 
 addButton.addEventListener("click", () => {
-  autoConstruct(getCategoryValue(), newToDo.value);
-  showStateSet();
+  isDups = dupCheck(newToDo.value);
+  console.log(`isDups says ${isDups}`);
+  if (isDups === true) {
+    console.log(`isDups = ${isDups}`);
+    alert("Duplicate todo provided. Please add a new todo, or change the category.");
+  } else {
+    autoConstruct(getCategoryValue(), newToDo.value);
+    
+  }
 });
+
+let dupCheck = (value) => {
+  selectedCategory = getCategoryValue();
+  console.log("dupCheck running");
+  console.log(`Incoming category is ${value}`);
+  let local = getAllStorageInfo();
+  console.log(local);
+  check = false
+  local.forEach((object) => {
+    console.log(object.category);
+    console.log(object.todo);
+    if (object.todo === value && object.category === selectedCategory) {
+     console.log("NOOOOOOOOPE!")
+     check = true
+    }   
+  });
+  return check;
+};
 
 //The main function that shows filtered info on the DOM
 let DOMbuilder = () => {
