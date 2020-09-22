@@ -445,3 +445,29 @@ function resizable(el, factor) {
   for (var i in e) el.addEventListener(e[i], resize, false);
   resize();
 }
+
+
+//Extra fun
+const keySequence = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
+];
+
+let userInput = new Array( keySequence.length );
+let contra = new Audio('src/contra.mp3')
+
+window.addEventListener( 'keydown', ( { key } ) => {
+  userInput = [ ...userInput.slice( 1 ), key ];
+
+  if ( keySequence.every( ( v, k ) => v === userInput[ k ] ) ) {
+      contra.play();
+  }
+} );
