@@ -48,12 +48,12 @@ let catGetter = () => {
     let catOption = document.createElement("option");
     catOption.value = category;
     catOption.textContent = category;
-    currentID = local.length + 1;
+    currentID = Math.floor(Math.random() * 99999) + getAllStorageInfo().length;
     catOption.id = `catOpt${currentID}`;
     categoryDrop.appendChild(catOption);
   });
   //Here, after the categories populated by the localStorage, automaticaly adds a blank &
-  //a new category adding option.
+  //a new category adding option. Fix duplicate blag
   let addBlankCat = document.createElement("option");
   addBlankCat.setAttribute("id", "blankCat");
   addBlankCat.value = "";
@@ -67,12 +67,53 @@ let catGetter = () => {
   categoryDrop.addEventListener("change", () => {
     if (categoryDrop.value === "new") {
       newCat = prompt("Add a new category");
-      let newCon = autoConstruct(newCat, "");
-      catGetter();
-      refreshDOM();
-      document.querySelector(`#input${newCon}`).focus();
+      badCatCheck = badCatInput(newCat);
+      if (badCatCheck === false) {
+        let newCon = autoConstruct(newCat, "");
+        catGetter();
+        refreshDOM();
+        document.querySelector(`#input${newCon}`).focus();
+      }
     }
   });
+};
+
+//function for various invalid category entries
+let badCatInput = (input) => {
+  if (dupCheckCat(input) === true) {
+    alert("Category already added.");
+    catGetter();
+    return true;
+  } else{
+    switch (input) {
+      case null:
+      case undefined:
+        alert("Null and undefined values not valid");
+        catGetter();
+        return true;
+      case "":
+      case " ":
+      case "  ":
+      case "   ":
+      case "    ":
+      case "     ":
+      case "      ":
+      case "       ":
+      case "        ":
+      case "         ":
+        alert("Blank category already added.");
+        catGetter();
+        return true;
+      case "fuck":
+      case "shit":
+        alert("Invalid category name. Please try again.")
+        catGetter()
+        return true;
+      default:
+        return false;
+    }
+
+  }
 };
 
 //Small function that refreshes the DOM rendering as needed. Really wish I had a cleaner way.
@@ -86,21 +127,6 @@ let refreshDOM = () => {
 let addObjToLocal = (obj) => {
   localStorage.setItem(obj.id, JSON.stringify(obj));
 };
-
-let main = document.querySelector("main");
-// main.addEventListener("load", () => {
-//   if (localStorage.get(0) === null) {
-//     localStorage.clear();
-//     initalTodos.forEach(
-//       (obj) => {
-//         addObjToLocal(obj);
-//         location.reload();
-//       },
-//       { once: true }
-//     );
-
-//   }
-// });
 
 //Set initial todos to storage manually via button
 let catReset = document.querySelector("#reset");
@@ -184,7 +210,7 @@ let getCatByID = (ID) => {
 let autoConstruct = (
   inheretCat,
   newVal,
-  id = (getAllStorageInfo().length + 1)
+  id = Math.floor(Math.random() * 99999) + getAllStorageInfo().length
 ) => {
   console.log(`Category to construct for: ${inheretCat}`);
   newTodoObj = {};
@@ -287,10 +313,9 @@ const showStateSet = () => {
   }
 };
 
-
 //Series of event listeners for the add todo box functionality
 
-let thatsADup = new Audio('src/incorrect.wav')
+let thatsADup = new Audio("src/incorrect.wav");
 
 const governAddTodo = () => {
   isDups = dupCheck(newToDo.value);
@@ -298,7 +323,7 @@ const governAddTodo = () => {
   if (isDups === true) {
     console.log(`isDups = ${isDups}`);
     newToDo.placeholder = "Duplicate todo provided";
-    thatsADup.play()
+    thatsADup.play();
     newToDo.classList.remove("rejectDupMessage");
     void newToDo.offsetWidth;
     newToDo.classList.add("rejectDupMessage");
@@ -309,33 +334,28 @@ const governAddTodo = () => {
     autoConstruct(getCategoryValue(), newToDo.value);
     refreshDOM();
     newToDo.value = null;
-    newToDo.focus()
+    newToDo.focus();
   }
-}
+};
 
 newToDo.addEventListener("keydown", (event) => {
   if (event.keyCode === 13) {
     governAddTodo();
-
   }
 });
 
-newToDo.addEventListener('click', () =>{
-  newToDo.placeholder = " "
-})
+newToDo.addEventListener("click", () => {
+  newToDo.placeholder = " ";
+});
 
-newToDo.addEventListener('blur', () =>{
+newToDo.addEventListener("blur", () => {
   newToDo.placeholder = "Enter todo here...";
-  newToDo.classList.remove("rejectDupMessage")
-
-})
+  newToDo.classList.remove("rejectDupMessage");
+});
 
 addButton.addEventListener("click", () => {
   governAddTodo();
 });
-
-
-
 
 let dupCheck = (value) => {
   selectedCategory = getCategoryValue();
@@ -349,6 +369,19 @@ let dupCheck = (value) => {
     console.log(object.todo);
     if (object.todo === value && object.category === selectedCategory) {
       console.log("NOOOOOOOOPE!");
+      check = true;
+    }
+  });
+  return check;
+};
+
+let dupCheckCat = (category) => {
+  selectedCategory = getCategoryValue();
+  let local = getAllStorageInfo();
+  check = false;
+  local.forEach((object) => {
+    if (object.category === category) {
+      console.log("Duplicate category add detected!");
       check = true;
     }
   });
