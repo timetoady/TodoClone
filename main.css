@@ -29,11 +29,11 @@ input{
 #reset:hover{
     background-color: red;
     color: white;
-    animation: pulse 2s infinite;
+    animation: pulse1 2s infinite;
     animation-timing-function: linear;   
   }
   
-  @keyframes pulse {
+  @keyframes pulse1 {
     0% {background-color:red; }
     50% {background-color:#f59352;
     100% {background-color:red; }
