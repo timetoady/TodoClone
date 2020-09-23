@@ -2,7 +2,21 @@ body{
     padding: 2%;
     background-color: #202124;
     color: #ccc;
+    font-family: 'Roboto', sans-serif;
 }
+
+button{
+    font-family: 'Noto Sans', sans-serif;
+}
+
+select {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+input{
+    font-family: 'Roboto', sans-serif;
+}
+
 
 #reset {
     border: none;
@@ -34,6 +48,7 @@ main {
 h1 {
     color: #ccc;
     font-size: 3rem;
+    font-family: 'Noto Sans', sans-serif;
 }
 
 #topDiv {
