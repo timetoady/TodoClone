@@ -117,7 +117,7 @@ ul {
 }
 
 ul div {
-    width: 96%;
+    max-width: 60%;
     padding: 0;
 
 }
@@ -125,6 +125,7 @@ ul div {
 ul input {
     font-size: 1.1rem;
     margin-left: .4rem;
+    
     
 }
 
@@ -201,9 +202,41 @@ ul button:hover{
 
 @media (max-width:500px) {
 
+    h1{
+        margin: .7rem 0
+    }
+
+    ul div {
+        max-width: 94%;
+        padding: 0;
+        display: flex;
+    
+    }
+    #topDiv{
+        padding: 0
+    }
+
+    ul button{
+        margin: 0;
+        position: relative;
+    }
+
+    input #newToDo{
+        margin-bottom: .5rem
+    }
+
+body{
+    width: 100vw;
+    padding: 0;
+}
+
+ul {
+    margin: .5rem 0;
+}
+
 main {
-    max-width: 96%;
-    margin: 0 auto;
+    max-width: 94vw;
+    margin: 0;
 }
 ul {
     padding-left: 0;
@@ -212,8 +245,15 @@ ul {
 width: 85% !important;
 }
 
-#newToDo, #addButton {
+#category, #addButton, #showHide {
     font-size: 16px;
+    padding: .5rem;
 }
+
+#newToDo  {
+    padding: .5rem;
+}
+
+
 }
 
