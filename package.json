@@ -17,6 +17,8 @@
     "url": "https://github.com/DGM-3760-Fall-2020/TodoAppAssign/issues"
   },
   "homepage": "https://github.com/DGM-3760-Fall-2020/TodoAppAssign#readme",
-  "devDependencies": {
+  "devDependencies": {},
+  "dependencies": {
+    "animate.css": "^4.1.1"
   }
 }

@@ -13,6 +13,10 @@ let initalTodos = [
   },
 ];
 
+window.onbeforeunload = function () {
+  alert("AHHHHHHHHHHHHHHHHHHHHHH!");
+};
+
 //Remaining issues to solve
 
 //Bugs to fix
@@ -23,6 +27,7 @@ let initalTodos = [
 
 //Main function that gets categories from localStorage and populates them in DOM with attributes.
 let catDiv = document.querySelector("#catDiv");
+
 let catGetter = () => {
   containerExists = document.querySelector("#category");
   if (containerExists === null) {
@@ -43,12 +48,12 @@ let catGetter = () => {
     let catOption = document.createElement("option");
     catOption.value = category;
     catOption.textContent = category;
-    currentID = Math.floor(Math.random() * 999999) + 4;
+    currentID = local.length + 1;
     catOption.id = `catOpt${currentID}`;
     categoryDrop.appendChild(catOption);
   });
-  //Here, after the categoreis populated by the localStorage, automaticaly adds a blank &
-  //new category adding option.
+  //Here, after the categories populated by the localStorage, automaticaly adds a blank &
+  //a new category adding option.
   let addBlankCat = document.createElement("option");
   addBlankCat.setAttribute("id", "blankCat");
   addBlankCat.value = "";
@@ -83,19 +88,21 @@ let addObjToLocal = (obj) => {
 };
 
 let main = document.querySelector("main");
+// main.addEventListener("load", () => {
+//   if (localStorage.get(0) === null) {
+//     localStorage.clear();
+//     initalTodos.forEach(
+//       (obj) => {
+//         addObjToLocal(obj);
+//         location.reload();
+//       },
+//       { once: true }
+//     );
 
-main.addEventListener("load", () => {
-  if (localStorage.get(1) === null) localStorage.clear();
-  initalTodos.forEach(
-    (obj) => {
-      addObjToLocal(obj);
-      location.reload();
-    },
-    { once: true }
-  );
-});
+//   }
+// });
 
-//Set initial todos to storage manually, or add them if none on load just once
+//Set initial todos to storage manually via button
 let catReset = document.querySelector("#reset");
 catReset.addEventListener("click", () => {
   localStorage.clear();
@@ -109,6 +116,7 @@ let resetCats = () => {
   });
 };
 
+//Add initialTodos if none on load just once
 const checkStorage = () => {
   storage = getAllStorageInfo();
   storage.length === 0 ? resetCats() : null;
@@ -176,7 +184,7 @@ let getCatByID = (ID) => {
 let autoConstruct = (
   inheretCat,
   newVal,
-  id = Math.floor(Math.random() * 999999) + 4
+  id = (getAllStorageInfo().length + 1)
 ) => {
   console.log(`Category to construct for: ${inheretCat}`);
   newTodoObj = {};
@@ -222,6 +230,7 @@ showHide.addEventListener("click", () => {
   showStateSet();
 });
 
+//Gets the value of the category drop down
 let getCategoryValue = () => {
   categoryDrop.addEventListener("change", () => {
     console.log(categoryDrop.value);
@@ -256,8 +265,6 @@ let filterToDOM = () => {
   return categoryByObj;
 };
 
-// filterToDOM();
-
 //A function to get info created by the nested filter above
 function getNested(fn, defaultVal) {
   try {
@@ -267,6 +274,7 @@ function getNested(fn, defaultVal) {
   }
 }
 
+//Function that governs switch of Show/Hide button
 const showStateSet = () => {
   if (showHide.value === "hide") {
     showHide.value = "show";
@@ -279,31 +287,55 @@ const showStateSet = () => {
   }
 };
 
-newToDo.addEventListener("keyup", (event) => {
-  if (event.keyCode === 13) {
-    isDups = dupCheck(newToDo.value);
-    console.log(`isDups says ${isDups}`);
-    if (isDups === true) {
-      console.log(`isDups = ${isDups}`);
-      alert("Duplicate todo provided.");
-    } else {
-      autoConstruct(getCategoryValue(), newToDo.value);
-      
-    }
-  }
-});
 
-addButton.addEventListener("click", () => {
+//Series of event listeners for the add todo box functionality
+
+let thatsADup = new Audio('src/incorrect.wav')
+
+const governAddTodo = () => {
   isDups = dupCheck(newToDo.value);
   console.log(`isDups says ${isDups}`);
   if (isDups === true) {
     console.log(`isDups = ${isDups}`);
-    alert("Duplicate todo provided. Please add a new todo, or change the category.");
+    newToDo.placeholder = "Duplicate todo provided";
+    thatsADup.play()
+    newToDo.classList.remove("rejectDupMessage");
+    void newToDo.offsetWidth;
+    newToDo.classList.add("rejectDupMessage");
+    newToDo.value = null;
   } else {
+    newToDo.placeholder = "Enter new todo...";
+    newToDo.classList.remove("rejectDupMessage");
     autoConstruct(getCategoryValue(), newToDo.value);
-    
+    refreshDOM();
+    newToDo.value = null;
+    newToDo.focus()
+  }
+}
+
+newToDo.addEventListener("keydown", (event) => {
+  if (event.keyCode === 13) {
+    governAddTodo();
+
   }
 });
+
+newToDo.addEventListener('click', () =>{
+  newToDo.placeholder = " "
+})
+
+newToDo.addEventListener('blur', () =>{
+  newToDo.placeholder = "Enter todo here...";
+  newToDo.classList.remove("rejectDupMessage")
+
+})
+
+addButton.addEventListener("click", () => {
+  governAddTodo();
+});
+
+
+
 
 let dupCheck = (value) => {
   selectedCategory = getCategoryValue();
@@ -311,14 +343,14 @@ let dupCheck = (value) => {
   console.log(`Incoming category is ${value}`);
   let local = getAllStorageInfo();
   console.log(local);
-  check = false
+  check = false;
   local.forEach((object) => {
     console.log(object.category);
     console.log(object.todo);
     if (object.todo === value && object.category === selectedCategory) {
-     console.log("NOOOOOOOOPE!")
-     check = true
-    }   
+      console.log("NOOOOOOOOPE!");
+      check = true;
+    }
   });
   return check;
 };
@@ -352,6 +384,7 @@ let DOMbuilder = () => {
       todoDiv.setAttribute("id", `div${todoStates.id}`);
       categoryUL.appendChild(todoDiv);
       let todoInput = document.createElement("input");
+      //Here I call the resizable to make sure my listed todo inputs are always the right size
       resizable(todoInput, 10);
       todoInput.value = todo;
       todoInput.placeholder = "List item";
@@ -365,13 +398,13 @@ let DOMbuilder = () => {
 
       //Experimental auto add new entry box
       // todoInput.addEventListener(
-      //   "input",
+      //   "keyup",
       //   () => {
       //     let newDiv = document.createElement("div");
       //     let newInput = document.createElement("input");
       //     let newCheck = document.createElement("input");
       //     newCheck.type = "checkbox";
-      //     newCheck.id = Math.floor(Math.random() * 999999) + 4;
+      //     newCheck.id = ;
       //     let newX = document.createElement("button");
       //     newX.textContent = "✕";
       //     //flabby
@@ -395,6 +428,7 @@ let DOMbuilder = () => {
       todoInput.setAttribute("id", `input${checkbox.id}`);
       categoryUL.setAttribute("id", `ul${checkbox.id}`);
       checkbox.value == `${todoStates.id}`;
+
       //Hides completed items
       if (todoStates.complete === true) {
         todoInput.setAttribute("class", "striked");
@@ -436,6 +470,7 @@ let DOMbuilder = () => {
 
 DOMbuilder();
 
+//Function I borrowed to automatically resize inputs when content is too large
 function resizable(el, factor) {
   var int = Number(factor) || 7.7;
   function resize() {
@@ -446,28 +481,27 @@ function resizable(el, factor) {
   resize();
 }
 
-
 //Extra fun
 const keySequence = [
-  'ArrowUp',
-  'ArrowUp',
-  'ArrowDown',
-  'ArrowDown',
-  'ArrowLeft',
-  'ArrowRight',
-  'ArrowLeft',
-  'ArrowRight',
-  'b',
-  'a',
+  "ArrowUp",
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowLeft",
+  "ArrowRight",
+  "b",
+  "a",
 ];
 
-let userInput = new Array( keySequence.length );
-let contra = new Audio('src/contra.mp3')
+let userInput = new Array(keySequence.length);
+let contra = new Audio("src/contra.mp3");
 
-window.addEventListener( 'keydown', ( { key } ) => {
-  userInput = [ ...userInput.slice( 1 ), key ];
+window.addEventListener("keydown", ({ key }) => {
+  userInput = [...userInput.slice(1), key];
 
-  if ( keySequence.every( ( v, k ) => v === userInput[ k ] ) ) {
-      contra.play();
+  if (keySequence.every((v, k) => v === userInput[k])) {
+    contra.play();
   }
-} );
+});

@@ -92,6 +92,7 @@ h1 {
     box-shadow: inset 0 0 0 1px #3E82F7;
     transition-delay: .3s;
     transition: ease-in-out .3s;
+
     
 }
 
@@ -166,6 +167,23 @@ ul button:hover{
     display: block !important;
 }
 
+.rejectDupMessage{
+    animation: shakeX;
+    animation-duration: .2s;
+
+}
+
+.rejectDupMessage::placeholder {
+    color: red;
+    font-weight: 600;
+    
+}
+
+.standardAddMessage::placeholder{
+    color: lightgray;
+    font-weight: 400;
+}
+
 @media (max-width:500px) {
 
 main {
@@ -183,3 +201,4 @@ width: 85% !important;
     font-size: 16px;
 }
 }
+
