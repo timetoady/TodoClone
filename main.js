@@ -84,7 +84,7 @@ let badCatInput = (input) => {
     alert("Category already added.");
     catGetter();
     return true;
-  } else{
+  } else {
     switch (input) {
       case null:
       case undefined:
@@ -106,13 +106,12 @@ let badCatInput = (input) => {
         return true;
       case "fuck":
       case "shit":
-        alert("Invalid category name. Please try again.")
-        catGetter()
+        alert("Invalid category name. Please try again.");
+        catGetter();
         return true;
       default:
         return false;
     }
-
   }
 };
 
@@ -417,6 +416,7 @@ let DOMbuilder = () => {
       todoDiv.setAttribute("id", `div${todoStates.id}`);
       categoryUL.appendChild(todoDiv);
       let todoInput = document.createElement("input");
+      
       //Here I call the resizable to make sure my listed todo inputs are always the right size
       resizable(todoInput, 10);
       todoInput.value = todo;
@@ -536,5 +536,8 @@ window.addEventListener("keydown", ({ key }) => {
 
   if (keySequence.every((v, k) => v === userInput[k])) {
     contra.play();
+    autoConstruct("Lives", 30);
+    refreshDOM();
+    catGetter();
   }
 });
