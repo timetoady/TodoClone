@@ -13,21 +13,13 @@ let initalTodos = [
   },
 ];
 
-window.onbeforeunload = function () {
-  alert("AHHHHHHHHHHHHHHHHHHHHHH!");
-};
-
 //Remaining issues to solve
 
-//Bugs to fix
-//View switches from Show all to Hide Complete when Add new is triggered. Must stay instead.
-
 //Features to update
-//Get cateogry info in popup instead of a prompt
+//Get cateogry info in modal instead of a prompt
 
 //Main function that gets categories from localStorage and populates them in DOM with attributes.
 let catDiv = document.querySelector("#catDiv");
-
 let catGetter = () => {
   containerExists = document.querySelector("#category");
   if (containerExists === null) {
@@ -53,7 +45,7 @@ let catGetter = () => {
     categoryDrop.appendChild(catOption);
   });
   //Here, after the categories populated by the localStorage, automaticaly adds a blank &
-  //a new category adding option. Fix duplicate blag
+  //a new category adding option.
   let addBlankCat = document.createElement("option");
   addBlankCat.setAttribute("id", "blankCat");
   addBlankCat.value = "";
@@ -115,14 +107,14 @@ let badCatInput = (input) => {
   }
 };
 
-//Small function that refreshes the DOM rendering as needed. Really wish I had a cleaner way.
+//Small function that refreshes the DOM rendering as needed. Will do replaceWith() next time.
 let refreshDOM = () => {
   let oldDiv = document.querySelector("#listContainer");
   oldDiv.remove();
   DOMbuilder();
 };
 
-//Commits recieved object to local storage.
+//Commits recieved object to local storage by changing it to a string.
 let addObjToLocal = (obj) => {
   localStorage.setItem(obj.id, JSON.stringify(obj));
 };
@@ -155,7 +147,7 @@ window.addEventListener(
   { once: true }
 );
 
-//Functions to get info from storage for display
+//Function to get info from storage for display
 let getInfoById = (id) => {
   let theItem = JSON.parse(localStorage.getItem(id));
   return theItem;
@@ -290,7 +282,7 @@ let filterToDOM = () => {
   return categoryByObj;
 };
 
-//A function to get info created by the nested filter above
+//A function to drill into and get info created by the nested filter above
 function getNested(fn, defaultVal) {
   try {
     return fn();
@@ -313,7 +305,6 @@ const showStateSet = () => {
 };
 
 //Series of event listeners for the add todo box functionality
-
 let thatsADup = new Audio("src/incorrect.wav");
 
 const governAddTodo = () => {
@@ -356,6 +347,7 @@ addButton.addEventListener("click", () => {
   governAddTodo();
 });
 
+//checks for duplicates for added todos
 let dupCheck = (value) => {
   selectedCategory = getCategoryValue();
   console.log("dupCheck running");
@@ -374,6 +366,7 @@ let dupCheck = (value) => {
   return check;
 };
 
+//Checks for duplicates for adding categories
 let dupCheckCat = (category) => {
   selectedCategory = getCategoryValue();
   let local = getAllStorageInfo();
@@ -390,7 +383,6 @@ let dupCheckCat = (category) => {
 //The main function that shows filtered info on the DOM
 let DOMbuilder = () => {
   console.log("DOMbuilder start!");
-
   filteredData = filterToDOM();
   console.log("Heres the filtered data");
   console.log(filteredData);
@@ -416,7 +408,7 @@ let DOMbuilder = () => {
       todoDiv.setAttribute("id", `div${todoStates.id}`);
       categoryUL.appendChild(todoDiv);
       let todoInput = document.createElement("input");
-      
+
       //Here I call the resizable to make sure my listed todo inputs are always the right size
       resizable(todoInput, 10);
       todoInput.value = todo;
